@@ -42,4 +42,12 @@ CREATE INDEX idx_packet_length ON network_logs(packet_length);
 -- Solution 4: Create an index that extracts the hour from the log_timestamp column
 CREATE INDEX idx_attack_hour ON network_logs ((EXTRACT(HOUR FROM log_timestamp)));
 
--- Solution 5: 
+-- Solution 5: Create a check constraint
+ALTER TABLE network_logs 
+ADD CONSTRAINT check_severity 
+CHECK (severity_level IN ('Low', 'Medium', 'High'));
+
+-- Solution 6: Create a check constraint
+ALTER TABLE network_logs 
+ADD CONSTRAINT check_packet_length 
+CHECK (packet_length >= 0);

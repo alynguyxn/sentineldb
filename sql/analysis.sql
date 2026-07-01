@@ -56,9 +56,26 @@ ORDER BY event_volume DESC;
 
 -- ------------------------------------------------------------------------
 
--- Problem 5: A user tries to insert a log that has a invalid severity level.
+-- Problem 5: A user tries to insert a log that has a invalid severity_level.
 -- Solution: Create a check constraint
 
-ALTER TABLE network_logs 
-ADD CONSTRAINT check_severity 
-CHECK (severity_level IN ('Low', 'Medium', 'High'));
+INSERT INTO network_logs (log_id, severity_level) 
+VALUES (1, 'Super-High');
+
+-- Problem 6: A user tries to insert a log with a negative packet_length
+-- Solution: Create a check constraint
+
+INSERT INTO network_logs (
+    log_timestamp, 
+    source_ip, 
+    attack_type, 
+    severity_level, 
+    packet_length
+) 
+VALUES (
+    '2026-07-01 18:30:00', 
+    '192.168.1.50', 
+    'Malware', 
+    'Medium', 
+    -100
+);
