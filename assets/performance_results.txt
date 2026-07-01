@@ -50,8 +50,11 @@ Execution Time: 7.049 ms
 
 ------------------------------------------------------------
 SUMMARY: 
-After applying aN index to the 'attack_type' column, 
-the execution time was reduced by approximately 67%.
+After applying an index to the 'attack_type' column, 
+the execution time was reduced by approximately 67%. While 
+the planning time increased due to the new index structure, 
+the overall execution performance significantly improved 
+for the query retrieval.
 
 ------------------------------------------------------------
 
