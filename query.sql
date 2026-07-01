@@ -2,4 +2,14 @@
 EXPLAIN ANALYZE
 SELECT * FROM network_logs WHERE packet_length = '1500';
 
-CREATE INDEX idx_packet_length ON network_logs(packet_length);
+DROP INDEX idx_packet_length;
+
+CREATE INDEX idx_attack_type ON network_logs(attack_type);
+
+EXPLAIN ANALYZE
+SELECT 
+    attack_type, 
+    COUNT(*) AS total_incidents
+FROM network_logs
+GROUP BY attack_type
+ORDER BY total_incidents DESC;

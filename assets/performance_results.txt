@@ -11,26 +11,39 @@ WHERE attack_type = 'DDoS';
 ------------------------------------------------------------
 1. BEFORE INDEXING (Sequential Scan)
 ------------------------------------------------------------
-Seq Scan on network_logs  (cost=0.00..2554.20 rows=71 width=1230) (actual time=17.039..62.147 rows=13428.00 loops=1)
-  Filter: ((attack_type)::text = 'DDoS'::text)
-  Rows Removed by Filter: 26572
-  Buffers: shared hit=2048 read=328 dirtied=375
+Sort  (cost=2976.05..2976.06 rows=3 width=15) (actual time=21.238..21.240 rows=3.00 loops=1)
+  Sort Key: (count(*)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=2379
+  ->  HashAggregate  (cost=2976.00..2976.03 rows=3 width=15) (actual time=21.221..21.226 rows=3.00 loops=1)
+        Group Key: attack_type
+        Batches: 1  Memory Usage: 32kB
+        Buffers: shared hit=2376
+        ->  Seq Scan on network_logs  (cost=0.00..2776.00 rows=40000 width=7) (actual time=0.019..5.786 rows=40000.00 loops=1)
+              Buffers: shared hit=2376
 Planning:
-  Buffers: shared hit=82
-Planning Time: 1.855 ms
-Execution Time: 62.824 ms
+  Buffers: shared hit=116
+Planning Time: 1.998 ms
+Execution Time: 21.313 ms
 
 ------------------------------------------------------------
 2. AFTER INDEXING (Index Scan)
 ------------------------------------------------------------
-Seq Scan on network_logs  (cost=0.00..2876.00 rows=13425 width=444) (actual time=0.082..35.541 rows=13428.00 loops=1)
-  Filter: ((attack_type)::text = 'DDoS'::text)
-  Rows Removed by Filter: 26572
-  Buffers: shared hit=2376
+Sort  (cost=1072.82..1072.83 rows=3 width=15) (actual time=6.952..6.954 rows=3.00 loops=1)
+  Sort Key: (count(*)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=4 read=35
+  ->  GroupAggregate  (cost=0.29..1072.79 rows=3 width=15) (actual time=2.988..6.920 rows=3.00 loops=1)
+        Group Key: attack_type
+        Buffers: shared hit=1 read=35
+        ->  Index Only Scan using idx_attack_type on network_logs  (cost=0.29..872.76 rows=40000 width=7) (actual time=0.369..3.542 rows=40000.00 loops=1)
+              Heap Fetches: 0
+              Index Searches: 1
+              Buffers: shared hit=1 read=35
 Planning:
-  Buffers: shared hit=157 read=1
-Planning Time: 13.432 ms
-Execution Time: 36.217 ms
+  Buffers: shared hit=127 read=1
+Planning Time: 20.253 ms
+Execution Time: 7.049 ms
 
 ------------------------------------------------------------
 SUMMARY: 

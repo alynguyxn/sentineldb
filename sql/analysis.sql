@@ -8,7 +8,6 @@ Purpose: Identifying high-risk patterns in network security logs
 -- Problem 1: What are the most frequent types of attacks?
 -- Solution: Group by attack_type to see which vectors are most common. 
 
-EXPLAIN ANALYZE
 SELECT 
     attack_type, 
     COUNT(*) AS total_incidents
