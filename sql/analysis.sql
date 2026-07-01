@@ -41,7 +41,6 @@ HAVING AVG(anomaly_score) > 75
 ORDER BY avg_anomaly_risk DESC
 LIMIT 10;
 
-
 -- ------------------------------------------------------------------------
 
 -- Problem 4: Are there unusually large data transfers?

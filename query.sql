@@ -1,13 +1,15 @@
 -- SentinelDB: Query
 
-DROP INDEX idx_severity_level;
+DROP INDEX idx_source_ip;
 
-CREATE INDEX idx_severity_level ON network_logs(severity_level);
+CREATE INDEX idx_source_ip ON network_logs(source_ip);
 
 EXPLAIN ANALYZE
 SELECT 
-    severity_level, 
-    COUNT(*) AS incident_count
+    source_ip, 
+    ROUND(AVG(anomaly_score), 2) AS avg_anomaly_risk
 FROM network_logs
-GROUP BY severity_level
-ORDER BY incident_count DESC;
+GROUP BY source_ip
+HAVING AVG(anomaly_score) > 75
+ORDER BY avg_anomaly_risk DESC
+LIMIT 10;
