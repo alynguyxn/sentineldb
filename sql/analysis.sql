@@ -100,3 +100,12 @@ JOIN network_logs b ON a.source_ip = b.source_ip
 WHERE a.log_timestamp < b.log_timestamp
   AND b.log_timestamp <= a.log_timestamp + INTERVAL '1 hour'
 ORDER BY a.source_ip, a.log_timestamp;
+
+---------------------------------------------------------------------------
+
+-- Problem 8: The storage space is running low.
+-- Solution: Delete log entries that are low severity and are > 90 days old
+
+DELETE FROM network_logs 
+WHERE severity_level = 'Low' 
+AND log_timestamp < CURRENT_DATE - INTERVAL '90 days';
