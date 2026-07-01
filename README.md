@@ -9,8 +9,9 @@ This project demonstrates skills in data engineering, SQL performance optimizati
 <br/><br/>
 
 ### Optimization on Problem 1
-- **Problem 1:** What are the most frequent types of attacks?
-- **Solution**: We group by attack_type to search for the vectors with the most common attack type. To reduce the execution time it takes to search for the vectors with the most common attack type, we can create an index for the attack_type column. Run the ``EXPLAIN ANALYZE`` segment before the query to view the analysis. This was done before and after creating the index to show how the query was optimized.
+- **Problem:** What are the most frequent types of attacks?
+- **Solution**: We group by ``attack_type`` to search for the vectors with the most common attack type. To reduce the execution time it takes to search for the vectors with the most common attack type, we can create an index for the ``attack_type column``. Run the ``EXPLAIN ANALYZE`` segment before the query to view the analysis. This was done before and after creating the index to show how the query was optimized.
+- **Summary:** After applying an index to the ``attack_type`` column, the execution time was reduced by approximately 67%. While the planning time increased due to the new index structure, the overall execution performance significantly improved for the query retrieval.
   
 - Query:
     ```
