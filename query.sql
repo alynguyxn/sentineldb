@@ -13,4 +13,6 @@ DROP TABLE network_logs;
 
 
 EXPLAIN ANALYZE
-SEELCT * FROM network_logs WHERE
+SELECT * FROM network_logs WHERE source_ip = '70.238.33.5';
+
+CREATE INDEX idx_source_ip ON network_logs(source_ip);

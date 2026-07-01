@@ -42,10 +42,6 @@ HAVING AVG(anomaly_score) > 75
 ORDER BY avg_anomaly_risk DESC
 LIMIT 10;
 
-/*
-    Results: After running the analysis, we see the list of IPs that have 
-    the largest average anomaly scores. These IPs are at the biggest risk.
-*/
 
 -- ------------------------------------------------------------------------
 
@@ -61,13 +57,6 @@ WHERE packet_length > (SELECT AVG(packet_length) FROM network_logs)
 ORDER BY packet_length DESC
 LIMIT 10;
 
-/*
-    Results: After running the analysis, we see a list of log ids and IPs 
-    that have packet lengths that are greater than the average packet 
-    length. These transfers should be examined because they were flagged 
-    by our query.
-*/
-
 -- ------------------------------------------------------------------------
 
 -- Problem 5: During which hour do most attacks occur?
@@ -81,8 +70,3 @@ FROM network_logs
 GROUP BY attack_hour
 ORDER BY event_volume DESC;
 
-/*
-    Results: After running the analysis, we see a list of the hours that
-     the attack occured and how large the event was. According to our 
-     analysis, most attacks occured around hour 13 (1:00 PM).
-*/

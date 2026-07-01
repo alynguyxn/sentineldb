@@ -41,7 +41,42 @@ the execution time was reduced by approximately 42%.
 
 PROBLEM 3:
 QUERY ANALYZED: 
-________________________________________________
+SELECT * FROM network_logs 
+WHERE source_ip = '70.238.33.5';
+
+------------------------------------------------------------
+1. BEFORE INDEXING (Sequential Scan)
+------------------------------------------------------------
+Seq Scan on network_logs  (cost=0.00..2876.00 rows=1 width=444) (actual time=10.711..23.998 rows=1.00 loops=1)
+  Filter: (source_ip = '70.238.33.5'::inet)
+  Rows Removed by Filter: 39999
+  Buffers: shared hit=2376
+Planning:
+  Buffers: shared hit=155
+Planning Time: 2.662 ms
+Execution Time: 24.037 ms
+
+------------------------------------------------------------
+2. AFTER INDEXING (Index Scan)
+------------------------------------------------------------
+Index Scan using idx_source_ip on network_logs  (cost=0.29..8.31 rows=1 width=444) (actual time=0.079..0.080 rows=1.00 loops=1)
+  Index Cond: (source_ip = '70.238.33.5'::inet)
+  Index Searches: 1
+  Buffers: shared hit=1 read=2
+Planning:
+  Buffers: shared hit=176 read=1
+Planning Time: 19.582 ms
+Execution Time: 0.144 ms
+
+------------------------------------------------------------
+SUMMARY: 
+After applying an index to the 'source_ip' column, the 
+execution time was reduced by approximately 99%.
+
+------------------------------------------------------------
+
+PROBLEM 4:
+QUERY ANALYZED: 
 
 ------------------------------------------------------------
 1. BEFORE INDEXING (Sequential Scan)
@@ -55,5 +90,5 @@ ________________________________________________
 
 ------------------------------------------------------------
 SUMMARY: 
-After applying an index to the 'source_ip' column, the 
+After applying an index to the 'packet_length' column, the 
 execution time was reduced by approximately __%.
