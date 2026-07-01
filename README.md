@@ -70,11 +70,9 @@ The data includes the following field logs:
 
 
 ## Features
-### Data Ingestion: Automated loading of raw CSV logs into a PostgreSQL relational structure.
-<br/>
-### Security Analytics: Complex SQL queries designed to calculate attack trends, identify high-risk IP addresses, and measure anomaly scores.
-<br/>
-### Performance Tuning: Optimization techniques implemented to reduce query execution time using indexing.
+- Data Ingestion: Automated loading of raw CSV logs into a PostgreSQL relational structure.
+- Security Analytics: Complex SQL queries designed to calculate attack trends, identify high-risk IP addresses, and measure anomaly scores.
+- Performance Tuning: Optimization techniques implemented to reduce query execution time using indexing.
 <br/><br/>
 
 ## How to Run
