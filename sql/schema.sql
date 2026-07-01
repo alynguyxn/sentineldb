@@ -1,5 +1,9 @@
--- SentinelDB: Schema Design
--- Author: Alyssa Nguyen
+/* 
+SentinelDB Schema
+Purpose: Create and edit tables and indexes
+ */
+
+---------------------------------------------------------------------------
 
 CREATE TABLE network_logs (
     log_id SERIAL PRIMARY KEY,
