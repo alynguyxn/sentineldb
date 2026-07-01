@@ -29,3 +29,6 @@ CREATE TABLE network_logs (
     ids_ips_alerts TEXT,
     log_source VARCHAR(50)
 );
+
+-- Optimization: Create an index on the severity-level column
+CREATE INDEX idx_severity_level ON network_logs(severity_level);
