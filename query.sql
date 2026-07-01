@@ -1,6 +1,4 @@
 -- SentinelDB: Query
-EXPLAIN ANALYZE
-SELECT * FROM network_logs WHERE packet_length = '1500';
 
 DROP INDEX idx_packet_length;
 

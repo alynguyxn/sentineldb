@@ -4,9 +4,12 @@ Project: SentinelDB
 ------------------------------------------------------------
 
 PROBLEM 1:
-QUERY ANALYZED: 
-SELECT * FROM network_logs 
-WHERE attack_type = 'DDoS';
+SELECT 
+    attack_type, 
+    COUNT(*) AS total_incidents
+FROM network_logs
+GROUP BY attack_type
+ORDER BY total_incidents DESC;
 
 ------------------------------------------------------------
 1. BEFORE INDEXING (Sequential Scan)
@@ -48,7 +51,7 @@ Execution Time: 7.049 ms
 ------------------------------------------------------------
 SUMMARY: 
 After applying aN index to the 'attack_type' column, 
-the execution time was reduced by approximately 42%.
+the execution time was reduced by approximately 67%.
 
 ------------------------------------------------------------
 
