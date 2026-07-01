@@ -239,3 +239,25 @@ After applying an index to the 'packet_length' column, the
 execution time was reduced by approximately 84%. The 
 planning times were about the same duration.
 
+------------------------------------------------------------
+
+PROBLEM 5:
+SELECT 
+    EXTRACT(HOUR FROM log_timestamp) AS attack_hour, 
+    COUNT(*) AS event_volume
+FROM network_logs
+GROUP BY attack_hour
+ORDER BY event_volume DESC;
+
+------------------------------------------------------------
+1. BEFORE INDEXING (Sequential Scan)
+------------------------------------------------------------
+
+
+------------------------------------------------------------
+2. AFTER INDEXING (Index Scan)
+------------------------------------------------------------
+
+
+------------------------------------------------------------
+SUMMARY: 

@@ -6,10 +6,8 @@ CREATE INDEX idx_packet_length ON network_logs(packet_length);
 
 EXPLAIN ANALYZE
 SELECT 
-    log_id, 
-    source_ip, 
-    packet_length
+    EXTRACT(HOUR FROM log_timestamp) AS attack_hour, 
+    COUNT(*) AS event_volume
 FROM network_logs
-WHERE packet_length > (SELECT AVG(packet_length) FROM network_logs)
-ORDER BY packet_length DESC
-LIMIT 10;
+GROUP BY attack_hour
+ORDER BY event_volume DESC;
