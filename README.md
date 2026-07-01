@@ -43,7 +43,7 @@ The data includes the following field logs:
 - log_source<br/><br/>
 
 
-# Current Capabilities
+# Features
 ### Data Ingestion: 
 Automated loading of raw CSV logs into a PostgreSQL relational structure.
 <br/>
