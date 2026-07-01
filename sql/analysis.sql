@@ -18,7 +18,7 @@ FROM network_logs
 GROUP BY severity_level
 ORDER BY incident_count DESC;
 
--- Q3: Identifying anomalous traffic (Large data transfers)
+-- Q3: Identifying large data transfers
 -- Note: Subquery compares against the global average to flag outliers
 SELECT log_id, source_ip, packet_length
 FROM network_logs
@@ -35,7 +35,7 @@ GROUP BY attack_hour
 ORDER BY event_volume DESC;
 
 -- Q5: Threat sequence analysis (Self-Join)
--- Note: Identifies potential 'kill-chain' activity within a 1-hour window
+-- Note: Identifies potential activity from same source_ip within a 1-hour window
 SELECT a.source_ip, 
        a.log_timestamp AS initial_event, 
        b.log_timestamp AS follow_up_event,
@@ -65,8 +65,8 @@ VALUES ('2026-07-01 18:30:00', '192.168.1.50', 'Malware', 'Medium', -100);
 -- PART 3: DATA LIFECYCLE MANAGEMENT (Administrative)
 ---------------------------------------------------------------------------
 
--- Q6: Purging stale/low-risk data
--- Note: Critical for maintaining database performance and storage compliance
+-- Q6: Remove low-risk data
+-- Note: Critical for maintaining database performance and saving storage
 DELETE FROM network_logs 
 WHERE severity_level = 'Low' 
 AND log_timestamp < CURRENT_DATE - INTERVAL '90 days';
