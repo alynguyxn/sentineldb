@@ -6,19 +6,15 @@ Purpose: Identifying high-risk patterns in network security logs
 -- ------------------------------------------------------------------------
 
 -- Problem 1: What are the most frequent types of attacks?
--- Solution: Group by attack_type to see which vectors are most common
+-- Solution: Group by attack_type to see which vectors are most common. 
 
+EXPLAIN ANALYZE
 SELECT 
     attack_type, 
     COUNT(*) AS total_incidents
 FROM network_logs
 GROUP BY attack_type
 ORDER BY total_incidents DESC;
-
-/* 
-    Results: After running the analysis, we see that the attack type with 
-    the greatest number of incidents is DDoS attacks.
-*/
 
 -- ------------------------------------------------------------------------
 
@@ -31,11 +27,6 @@ SELECT
 FROM network_logs
 GROUP BY severity_level
 ORDER BY incident_count DESC;
-
-/* 
-    Results: After running the analysis, we see that the largest severity 
-    level is medium incidents, so they require the most attention.
-*/
 
 -- ------------------------------------------------------------------------
 

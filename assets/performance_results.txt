@@ -1,0 +1,59 @@
+------------------------------------------------------------
+DATABASE PERFORMANCE OPTIMIZATION REPORT
+Project: SentinelDB
+------------------------------------------------------------
+
+PROBLEM 1:
+QUERY ANALYZED: 
+SELECT * FROM network_logs 
+WHERE attack_type = 'DDoS';
+
+------------------------------------------------------------
+1. BEFORE INDEXING (Sequential Scan)
+------------------------------------------------------------
+Seq Scan on network_logs  (cost=0.00..2554.20 rows=71 width=1230) (actual time=17.039..62.147 rows=13428.00 loops=1)
+  Filter: ((attack_type)::text = 'DDoS'::text)
+  Rows Removed by Filter: 26572
+  Buffers: shared hit=2048 read=328 dirtied=375
+Planning:
+  Buffers: shared hit=82
+Planning Time: 1.855 ms
+Execution Time: 62.824 ms
+
+------------------------------------------------------------
+2. AFTER INDEXING (Index Scan)
+------------------------------------------------------------
+Seq Scan on network_logs  (cost=0.00..2876.00 rows=13425 width=444) (actual time=0.082..35.541 rows=13428.00 loops=1)
+  Filter: ((attack_type)::text = 'DDoS'::text)
+  Rows Removed by Filter: 26572
+  Buffers: shared hit=2376
+Planning:
+  Buffers: shared hit=157 read=1
+Planning Time: 13.432 ms
+Execution Time: 36.217 ms
+
+------------------------------------------------------------
+SUMMARY: 
+After applying aN index to the 'attack_type' column, 
+the execution time was reduced by approximately 42%.
+
+------------------------------------------------------------
+
+PROBLEM 3:
+QUERY ANALYZED: 
+________________________________________________
+
+------------------------------------------------------------
+1. BEFORE INDEXING (Sequential Scan)
+------------------------------------------------------------
+
+
+------------------------------------------------------------
+2. AFTER INDEXING (Index Scan)
+------------------------------------------------------------
+
+
+------------------------------------------------------------
+SUMMARY: 
+After applying an index to the 'source_ip' column, the 
+execution time was reduced by approximately __%.
