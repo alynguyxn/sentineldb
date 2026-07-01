@@ -1,100 +1,46 @@
-/* 
-SentinelDB Analysis
-Purpose: Identifying high-risk patterns in network security logs
- */
+/* SentinelDB Analysis
+Purpose: Security log analytics, integrity enforcement, and lifecycle management
+*/
 
 ---------------------------------------------------------------------------
+-- PART 1: ANALYTICAL QUERIES (Threat Intelligence)
+---------------------------------------------------------------------------
 
--- Problem 1: What are the most frequent types of attacks?
--- Solution: Group by attack_type to see which vectors are most common. 
-
-SELECT 
-    attack_type, 
-    COUNT(*) AS total_incidents
+-- Q1: Most frequent attack vectors
+SELECT attack_type, COUNT(*) AS total_incidents
 FROM network_logs
 GROUP BY attack_type
 ORDER BY total_incidents DESC;
 
----------------------------------------------------------------------------
-
--- Problem 2: Which severity levels require the most attention?
--- Solution: Count events by severity to prioritize incident response
-
-SELECT 
-    severity_level, 
-    COUNT(*) AS incident_count
+-- Q2: Severity prioritization
+SELECT severity_level, COUNT(*) AS incident_count
 FROM network_logs
 GROUP BY severity_level
 ORDER BY incident_count DESC;
 
----------------------------------------------------------------------------
-
--- Problem 3: Are there unusually large data transfers?
--- Solution: Find logs where packet_length > average
-
-SELECT 
-    log_id, 
-    source_ip, 
-    packet_length
+-- Q3: Identifying anomalous traffic (Large data transfers)
+-- Note: Subquery compares against the global average to flag outliers
+SELECT log_id, source_ip, packet_length
 FROM network_logs
 WHERE packet_length > (SELECT AVG(packet_length) FROM network_logs)
 ORDER BY packet_length DESC
 LIMIT 10;
 
----------------------------------------------------------------------------
-
--- Problem 4: During which hour do most attacks occur?
--- Solution: Extract the hour from the timestamp to identify peak activity 
--- windows
-
-SELECT 
-    EXTRACT(HOUR FROM log_timestamp) AS attack_hour, 
-    COUNT(*) AS event_volume
+-- Q4: Identifying peak activity windows
+-- Note: Using EXTRACT to map event frequency to hourly cycles
+SELECT EXTRACT(HOUR FROM log_timestamp) AS attack_hour, 
+       COUNT(*) AS event_volume
 FROM network_logs
 GROUP BY attack_hour
 ORDER BY event_volume DESC;
 
----------------------------------------------------------------------------
-
--- Problem 5: A user tries to insert a log that has a invalid severity_level.
--- Solution: Create a check constraint
-
-INSERT INTO network_logs (log_id, severity_level) 
-VALUES (1, 'Super-High');
-
----------------------------------------------------------------------------
-
--- Problem 6: A user tries to insert a log with a negative packet_length
--- Solution: Create a check constraint
-
-INSERT INTO network_logs (
-    log_timestamp, 
-    source_ip, 
-    attack_type, 
-    severity_level, 
-    packet_length
-) 
-VALUES (
-    '2026-07-01 18:30:00', 
-    '192.168.1.50', 
-    'Malware', 
-    'Medium', 
-    -100
-);
-
----------------------------------------------------------------------------
-
--- Problem 7: Find all follow-up attacks that occur within 1 hour of the 
--- inital attack.
--- Solution: Using a JOIN statement,search for all related events where 
--- the same source_ip generated subsequent log within 1 hour
-
-SELECT 
-    a.source_ip, 
-    a.log_timestamp AS initial_event, 
-    b.log_timestamp AS follow_up_event,
-    a.attack_type AS initial_attack,
-    b.attack_type AS follow_up_attack
+-- Q5: Threat sequence analysis (Self-Join)
+-- Note: Identifies potential 'kill-chain' activity within a 1-hour window
+SELECT a.source_ip, 
+       a.log_timestamp AS initial_event, 
+       b.log_timestamp AS follow_up_event,
+       a.attack_type AS initial_attack,
+       b.attack_type AS follow_up_attack
 FROM network_logs a
 JOIN network_logs b ON a.source_ip = b.source_ip
 WHERE a.log_timestamp < b.log_timestamp
@@ -102,10 +48,25 @@ WHERE a.log_timestamp < b.log_timestamp
 ORDER BY a.source_ip, a.log_timestamp;
 
 ---------------------------------------------------------------------------
+-- PART 2: DATA INTEGRITY (Constraint Enforcement)
+---------------------------------------------------------------------------
 
--- Problem 8: The storage space is running low.
--- Solution: Delete log entries that are low severity and are > 90 days old
+-- Note: These queries will trigger errors if constraints are properly applied.
+-- They demonstrate defensive programming and data validation.
 
+-- Test 1: Severity validation (Expected: Error)
+INSERT INTO network_logs (log_id, severity_level) VALUES (1, 'Super-High');
+
+-- Test 2: Negative value protection (Expected: Error)
+INSERT INTO network_logs (log_timestamp, source_ip, attack_type, severity_level, packet_length) 
+VALUES ('2026-07-01 18:30:00', '192.168.1.50', 'Malware', 'Medium', -100);
+
+---------------------------------------------------------------------------
+-- PART 3: DATA LIFECYCLE MANAGEMENT (Administrative)
+---------------------------------------------------------------------------
+
+-- Q6: Purging stale/low-risk data
+-- Note: Critical for maintaining database performance and storage compliance
 DELETE FROM network_logs 
 WHERE severity_level = 'Low' 
 AND log_timestamp < CURRENT_DATE - INTERVAL '90 days';
