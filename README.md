@@ -10,9 +10,23 @@ This project demonstrates skills in data engineering, SQL performance optimizati
 
 ### Optimization on Problem 1
 - **Problem 1:** What are the most frequent types of attacks?
-- **Solution**: We group by attack_type to search for the vectors with the most common attack type. To reduce the execution time it takes to search for the vectors with the most common attack type, we can create an index for the attack_type column. 
+- **Solution**: We group by attack_type to search for the vectors with the most common attack type. To reduce the execution time it takes to search for the vectors with the most common attack type, we can create an index for the attack_type column. Run the ``EXPLAIN ANALYZE`` segment before the query to view the analysis. This was done before and after creating the index to show how the query was optimized.
+  
+- Query:
+    ```
+    SELECT 
+        attack_type, 
+        COUNT(*) AS total_incidents
+    FROM network_logs
+    GROUP BY attack_type
+    ORDER BY total_incidents DESC;
+    ```
+- Create index:
+    ```
+    CREATE INDEX idx_attack_type ON network_logs(attack_type);
+    ```
 <br/>
-<img width="1917" height="1140" alt="image" src="https://github.com/user-attachments/assets/c5df17ee-ef64-4085-9f91-3bf90fd2459f" />
+<img width="1917" height="1137" alt="sentineldb-github-problem-1-updated" src="https://github.com/user-attachments/assets/9bad5f1d-6a06-4072-8c2d-cdff50c4236b" />
 <br/>
 
 ## Project Purpose
