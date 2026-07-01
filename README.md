@@ -10,7 +10,7 @@ This project demonstrates skills in data engineering, SQL performance optimizati
 
 ### Optimization on Problem 1
 - **Problem 1:** What are the most frequent types of attacks?
-- **Solution**: We group by attack_type to search for the vectors with the most common attack type. To reduce the execution time it takes to search for the vectors with the most common attack type, we can create an index for the severity_level column. 
+- **Solution**: We group by attack_type to search for the vectors with the most common attack type. To reduce the execution time it takes to search for the vectors with the most common attack type, we can create an index for the attack_type column. 
 <br/>
 <img width="1917" height="1140" alt="image" src="https://github.com/user-attachments/assets/c5df17ee-ef64-4085-9f91-3bf90fd2459f" />
 <br/>
