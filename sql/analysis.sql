@@ -3,7 +3,7 @@ SentinelDB Analysis
 Purpose: Identifying high-risk patterns in network security logs
  */
 
--- ------------------------------------------------------------------------
+---------------------------------------------------------------------------
 
 -- Problem 1: What are the most frequent types of attacks?
 -- Solution: Group by attack_type to see which vectors are most common. 
@@ -15,7 +15,7 @@ FROM network_logs
 GROUP BY attack_type
 ORDER BY total_incidents DESC;
 
--- ------------------------------------------------------------------------
+---------------------------------------------------------------------------
 
 -- Problem 2: Which severity levels require the most attention?
 -- Solution: Count events by severity to prioritize incident response
@@ -27,7 +27,7 @@ FROM network_logs
 GROUP BY severity_level
 ORDER BY incident_count DESC;
 
--- ------------------------------------------------------------------------
+---------------------------------------------------------------------------
 
 -- Problem 3: Are there unusually large data transfers?
 -- Solution: Find logs where packet_length > average
@@ -41,7 +41,7 @@ WHERE packet_length > (SELECT AVG(packet_length) FROM network_logs)
 ORDER BY packet_length DESC
 LIMIT 10;
 
--- ------------------------------------------------------------------------
+---------------------------------------------------------------------------
 
 -- Problem 4: During which hour do most attacks occur?
 -- Solution: Extract the hour from the timestamp to identify peak activity 
@@ -54,13 +54,15 @@ FROM network_logs
 GROUP BY attack_hour
 ORDER BY event_volume DESC;
 
--- ------------------------------------------------------------------------
+---------------------------------------------------------------------------
 
 -- Problem 5: A user tries to insert a log that has a invalid severity_level.
 -- Solution: Create a check constraint
 
 INSERT INTO network_logs (log_id, severity_level) 
 VALUES (1, 'Super-High');
+
+---------------------------------------------------------------------------
 
 -- Problem 6: A user tries to insert a log with a negative packet_length
 -- Solution: Create a check constraint
@@ -79,3 +81,6 @@ VALUES (
     'Medium', 
     -100
 );
+
+---------------------------------------------------------------------------
+
