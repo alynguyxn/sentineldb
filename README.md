@@ -1,9 +1,19 @@
-# SentinelDB
-<br/><br/>
-# Overview
+# SentinelDB <br/>
+
+## Overview
 SentinelDB is a portfolio-based database project designed to store, manage, and analyze large-scale network security logs. 
 This project demonstrates skills in data engineering, SQL performance optimization, and cybersecurity data analysis. <br/><br/>
 
+### Schema: Designing the table
+<img width="1917" height="1142" alt="image" src="https://github.com/user-attachments/assets/c1ee1a96-ef77-4ca8-a87b-4c7b37906636" />
+<br/><br/>
+
+### Optimization on Problem 1
+- **Problem 1:** What are the most frequent types of attacks?
+- **Solution**: We group by attack_type to search for the vectors with the most common attack type. To reduce the execution time it takes to search for the vectors with the most common attack type, we can create an index for the severity_level column. 
+<br/>
+<img width="1917" height="1140" alt="image" src="https://github.com/user-attachments/assets/c5df17ee-ef64-4085-9f91-3bf90fd2459f" />
+<br/>
 
 ## Project Purpose
 The goal of this project is to simulate a Security Operations Center (SOC) environment where 40,000 network events are processed and queried to detect patterns in malicious activity. By building this database, I am exploring how to effectively index, aggregate, and report on security telemetry data.<br/><br/>
@@ -44,18 +54,18 @@ The data includes the following field logs:
 - log_source: The originating devide/service providing the data<br/><br/>
 
 
-# Features
-### Data Ingestion: 
+## Features
+#### Data Ingestion: 
 Automated loading of raw CSV logs into a PostgreSQL relational structure.
 <br/>
-### Security Analytics: 
+#### Security Analytics: 
 Complex SQL queries designed to calculate attack trends, identify high-risk IP addresses, and measure anomaly scores.
 <br/>
-### Performance Tuning: 
-Optimization techniques implemented to reduce query execution time using B-Tree indexing.
+#### Performance Tuning: 
+Optimization techniques implemented to reduce query execution time using indexing.
 <br/><br/>
 
-# How to Run
+## How to Run
 1. Clone the repository: ``git clone https://github.com/alynguyxn/sentineldb.git``
 2. Setup Database: Run ``sql/schema.sql`` to initialize the tables.
 3. Import Data: Use the psql command to import your CSV file.
