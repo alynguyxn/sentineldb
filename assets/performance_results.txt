@@ -76,19 +76,39 @@ execution time was reduced by approximately 99%.
 ------------------------------------------------------------
 
 PROBLEM 4:
-QUERY ANALYZED: 
+QUERY ANALYZED:
+SELECT * FROM network_logs 
+WHERE packet_length = '1500';
 
 ------------------------------------------------------------
 1. BEFORE INDEXING (Sequential Scan)
 ------------------------------------------------------------
-
+Seq Scan on network_logs  (cost=0.00..2876.00 rows=27 width=444) (actual time=0.544..22.354 rows=26.00 loops=1)
+  Filter: (packet_length = 1500)
+  Rows Removed by Filter: 39974
+  Buffers: shared hit=2376
+Planning:
+  Buffers: shared hit=173
+Planning Time: 2.572 ms
+Execution Time: 22.379 ms
 
 ------------------------------------------------------------
 2. AFTER INDEXING (Index Scan)
 ------------------------------------------------------------
-
+Bitmap Heap Scan on network_logs  (cost=4.50..104.20 rows=27 width=444) (actual time=0.384..0.580 rows=26.00 loops=1)
+  Recheck Cond: (packet_length = 1500)
+  Heap Blocks: exact=26
+  Buffers: shared hit=26 read=2
+  ->  Bitmap Index Scan on idx_packet_length  (cost=0.00..4.49 rows=27 width=0) (actual time=0.105..0.105 rows=26.00 loops=1)
+        Index Cond: (packet_length = 1500)
+        Index Searches: 1
+        Buffers: shared read=2
+Planning:
+  Buffers: shared hit=188 read=1
+Planning Time: 20.472 ms
+Execution Time: 0.966 ms
 
 ------------------------------------------------------------
 SUMMARY: 
 After applying an index to the 'packet_length' column, the 
-execution time was reduced by approximately __%.
+execution time was reduced by approximately 96%.
