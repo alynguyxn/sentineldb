@@ -38,3 +38,6 @@ CREATE INDEX idx_severity_level ON network_logs(severity_level);
 
 -- Solution 3: Create an index on the source_ip column
 CREATE INDEX idx_source_ip ON network_logs(source_ip);
+
+-- Solution 4: Create an index on the packet_length column
+CREATE INDEX idx_packet_length ON network_logs(packet_length);

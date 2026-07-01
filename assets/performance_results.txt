@@ -176,3 +176,66 @@ to the first and second problem, even though the planning
 time was increased due to the new index structure, the 
 overall execution performance significantly improved for 
 the query retrieval.
+
+------------------------------------------------------------
+
+PROBLEM 4:
+SELECT 
+    log_id, 
+    source_ip, 
+    packet_length
+FROM network_logs
+WHERE packet_length > (SELECT AVG(packet_length) FROM network_logs)
+ORDER BY packet_length DESC
+LIMIT 10;
+
+------------------------------------------------------------
+1. BEFORE INDEXING (Sequential Scan)
+------------------------------------------------------------
+Limit  (cost=6140.13..6140.16 rows=10 width=15) (actual time=49.304..49.309 rows=10.00 loops=1)
+  Buffers: shared hit=4755
+  InitPlan 1
+    ->  Aggregate  (cost=2876.00..2876.01 rows=1 width=32) (actual time=26.659..26.661 rows=1.00 loops=1)
+          Buffers: shared hit=2376
+          ->  Seq Scan on network_logs network_logs_1  (cost=0.00..2776.00 rows=40000 width=4) (actual time=0.016..9.283 rows=40000.00 loops=1)
+                Buffers: shared hit=2376
+  ->  Sort  (cost=3264.12..3297.45 rows=13333 width=15) (actual time=49.300..49.301 rows=10.00 loops=1)
+        Sort Key: network_logs.packet_length DESC
+        Sort Method: top-N heapsort  Memory: 25kB
+        Buffers: shared hit=4755
+        ->  Seq Scan on network_logs  (cost=0.00..2976.00 rows=13333 width=15) (actual time=26.770..46.256 rows=20020.00 loops=1)
+              Filter: ((packet_length)::numeric > (InitPlan 1).col1)
+              Rows Removed by Filter: 19980
+              Buffers: shared hit=4752
+Planning:
+  Buffers: shared hit=124
+Planning Time: 20.174 ms
+Execution Time: 49.437 ms
+
+------------------------------------------------------------
+2. AFTER INDEXING (Index Scan)
+------------------------------------------------------------
+Limit  (cost=996.58..1004.43 rows=10 width=15) (actual time=7.072..7.158 rows=10.00 loops=1)
+  Buffers: shared hit=13 read=38
+  InitPlan 1
+    ->  Aggregate  (cost=996.28..996.29 rows=1 width=32) (actual time=6.824..6.825 rows=1.00 loops=1)
+          Buffers: shared hit=3 read=36
+          ->  Index Only Scan using idx_packet_length on network_logs network_logs_1  (cost=0.29..896.28 rows=40000 width=4) (actual time=0.265..4.257 rows=40000.00 loops=1)
+                Heap Fetches: 0
+                Index Searches: 1
+                Buffers: shared hit=3 read=36
+  ->  Index Scan Backward using idx_packet_length on network_logs  (cost=0.29..10459.76 rows=13333 width=15) (actual time=7.070..7.154 rows=10.00 loops=1)
+        Filter: ((packet_length)::numeric > (InitPlan 1).col1)
+        Index Searches: 1
+        Buffers: shared hit=13 read=38
+Planning:
+  Buffers: shared hit=134 read=1
+Planning Time: 21.978 ms
+Execution Time: 7.687 ms
+
+------------------------------------------------------------
+SUMMARY: 
+After applying an index to the 'packet_length' column, the 
+execution time was reduced by approximately 84%. The 
+planning times were about the same duration.
+
