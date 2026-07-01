@@ -58,7 +58,7 @@ for the query retrieval.
 
 ------------------------------------------------------------
 
-PROBLEM 3:
+PROBLEM 2:
 SELECT 
     severity_level, 
     COUNT(*) AS incident_count
@@ -114,7 +114,7 @@ retrieval.
 
 ------------------------------------------------------------
 
-PROBLEM 4:
+PROBLEM 3:
 QUERY ANALYZED:
 SELECT * FROM network_logs 
 WHERE packet_length = '1500';
