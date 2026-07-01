@@ -22,7 +22,7 @@ This project demonstrates skills in data engineering, SQL performance optimizati
     GROUP BY attack_type
     ORDER BY total_incidents DESC;
     ```
-- Create index:
+- Solution:
     ```
     CREATE INDEX idx_attack_type ON network_logs(attack_type);
     ```
