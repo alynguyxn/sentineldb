@@ -59,38 +59,58 @@ for the query retrieval.
 ------------------------------------------------------------
 
 PROBLEM 3:
-QUERY ANALYZED: 
-SELECT * FROM network_logs 
-WHERE source_ip = '70.238.33.5';
+SELECT 
+    severity_level, 
+    COUNT(*) AS incident_count
+FROM network_logs
+GROUP BY severity_level
+ORDER BY incident_count DESC;
 
 ------------------------------------------------------------
 1. BEFORE INDEXING (Sequential Scan)
 ------------------------------------------------------------
-Seq Scan on network_logs  (cost=0.00..2876.00 rows=1 width=444) (actual time=10.711..23.998 rows=1.00 loops=1)
-  Filter: (source_ip = '70.238.33.5'::inet)
-  Rows Removed by Filter: 39999
-  Buffers: shared hit=2376
+Sort  (cost=2976.05..2976.06 rows=3 width=13) (actual time=36.355..36.357 rows=3.00 loops=1)
+  Sort Key: (count(*)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=2379
+  ->  HashAggregate  (cost=2976.00..2976.03 rows=3 width=13) (actual time=36.335..36.340 rows=3.00 loops=1)
+        Group Key: severity_level
+        Batches: 1  Memory Usage: 32kB
+        Buffers: shared hit=2376
+        ->  Seq Scan on network_logs  (cost=0.00..2776.00 rows=40000 width=5) (actual time=0.037..19.137 rows=40000.00 loops=1)
+              Buffers: shared hit=2376
 Planning:
-  Buffers: shared hit=155
-Planning Time: 2.662 ms
-Execution Time: 24.037 ms
+  Buffers: shared hit=117 dirtied=1
+Planning Time: 1.521 ms
+Execution Time: 36.421 ms
 
 ------------------------------------------------------------
 2. AFTER INDEXING (Index Scan)
 ------------------------------------------------------------
-Index Scan using idx_source_ip on network_logs  (cost=0.29..8.31 rows=1 width=444) (actual time=0.079..0.080 rows=1.00 loops=1)
-  Index Cond: (source_ip = '70.238.33.5'::inet)
-  Index Searches: 1
-  Buffers: shared hit=1 read=2
+Sort  (cost=1073.00..1073.01 rows=3 width=13) (actual time=8.171..8.171 rows=3.00 loops=1)
+  Sort Key: (count(*)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=4 read=35
+  ->  GroupAggregate  (cost=0.29..1072.98 rows=3 width=13) (actual time=2.361..8.105 rows=3.00 loops=1)
+        Group Key: severity_level
+        Buffers: shared hit=1 read=35
+        ->  Index Only Scan using idx_severity_level on network_logs  (cost=0.29..872.95 rows=40000 width=5) (actual time=0.578..4.858 rows=40000.00 loops=1)
+              Heap Fetches: 0
+              Index Searches: 1
+              Buffers: shared hit=1 read=35
 Planning:
-  Buffers: shared hit=176 read=1
-Planning Time: 19.582 ms
-Execution Time: 0.144 ms
+  Buffers: shared hit=127 read=1
+Planning Time: 24.486 ms
+Execution Time: 8.320 ms
 
 ------------------------------------------------------------
 SUMMARY: 
-After applying an index to the 'source_ip' column, the 
-execution time was reduced by approximately 99%.
+After applying an index to the 'severity_level' column, the 
+execution time was reduced by approximately 77%. Similarly
+to the first problem, even though the planning time was 
+increased due to the new index structure, the overall 
+execution performance significantly improved for the query 
+retrieval.
 
 ------------------------------------------------------------
 

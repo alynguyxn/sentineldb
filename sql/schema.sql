@@ -33,3 +33,5 @@ CREATE TABLE network_logs (
 -- Solution 1: Create an index on the attack_type column
 CREATE INDEX idx_attack_type ON network_logs(attack_type);
 
+-- Solution 2: Create an index on the severity_level column
+CREATE INDEX idx_severity_level ON network_logs(severity_level);

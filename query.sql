@@ -1,13 +1,13 @@
 -- SentinelDB: Query
 
-DROP INDEX idx_packet_length;
+DROP INDEX idx_severity_level;
 
-CREATE INDEX idx_attack_type ON network_logs(attack_type);
+CREATE INDEX idx_severity_level ON network_logs(severity_level);
 
 EXPLAIN ANALYZE
 SELECT 
-    attack_type, 
-    COUNT(*) AS total_incidents
+    severity_level, 
+    COUNT(*) AS incident_count
 FROM network_logs
-GROUP BY attack_type
-ORDER BY total_incidents DESC;
+GROUP BY severity_level
+ORDER BY incident_count DESC;
