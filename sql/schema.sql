@@ -41,3 +41,6 @@ CREATE INDEX idx_source_ip ON network_logs(source_ip);
 
 -- Solution 4: Create an index on the packet_length column
 CREATE INDEX idx_packet_length ON network_logs(packet_length);
+
+-- Solution 5: Create an index that extracts the hour from the log_timestamp column
+CREATE INDEX idx_attack_hour ON network_logs ((EXTRACT(HOUR FROM log_timestamp)));

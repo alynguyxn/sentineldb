@@ -1,8 +1,8 @@
 -- SentinelDB: Query
 
-DROP INDEX idx_packet_length;
 
-CREATE INDEX idx_packet_length ON network_logs(packet_length);
+
+CREATE INDEX idx_attack_hour ON network_logs ((EXTRACT(HOUR FROM log_timestamp)));
 
 EXPLAIN ANALYZE
 SELECT 

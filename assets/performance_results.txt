@@ -174,7 +174,7 @@ After applying an index to the 'source_ip' column, the
 execution time was reduced by approximately 24%. Similar
 to the first and second problem, even though the planning 
 time was increased due to the new index structure, the 
-overall execution performance significantly improved for 
+overall execution performance improved for 
 the query retrieval.
 
 ------------------------------------------------------------
@@ -252,12 +252,43 @@ ORDER BY event_volume DESC;
 ------------------------------------------------------------
 1. BEFORE INDEXING (Sequential Scan)
 ------------------------------------------------------------
-
+Sort  (cost=6632.87..6732.85 rows=39993 width=40) (actual time=55.405..55.409 rows=24.00 loops=1)
+  Sort Key: (count(*)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=2379
+  ->  HashAggregate  (cost=3076.00..3575.91 rows=39993 width=40) (actual time=55.154..55.334 rows=24.00 loops=1)
+        Group Key: EXTRACT(hour FROM log_timestamp)
+        Batches: 1  Memory Usage: 1057kB
+        Buffers: shared hit=2376
+        ->  Seq Scan on network_logs  (cost=0.00..2876.00 rows=40000 width=32) (actual time=1.049..45.499 rows=40000.00 loops=1)
+              Buffers: shared hit=2376
+Planning:
+  Buffers: shared hit=150
+Planning Time: 6.643 ms
+Execution Time: 56.884 ms
 
 ------------------------------------------------------------
 2. AFTER INDEXING (Index Scan)
 ------------------------------------------------------------
-
+Sort  (cost=6632.87..6732.85 rows=39993 width=40) (actual time=38.288..38.292 rows=24.00 loops=1)
+  Sort Key: (count(*)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=2379
+  ->  HashAggregate  (cost=3076.00..3575.91 rows=39993 width=40) (actual time=38.092..38.236 rows=24.00 loops=1)
+        Group Key: EXTRACT(hour FROM log_timestamp)
+        Batches: 1  Memory Usage: 1057kB
+        Buffers: shared hit=2376
+        ->  Seq Scan on network_logs  (cost=0.00..2876.00 rows=40000 width=32) (actual time=0.096..29.132 rows=40000.00 loops=1)
+              Buffers: shared hit=2376
+Planning:
+  Buffers: shared hit=168 read=1
+Planning Time: 21.395 ms
+Execution Time: 38.980 ms
 
 ------------------------------------------------------------
 SUMMARY: 
+After applying an index that pre-calculates the hour from 
+the 'log_timestamp' column, the execution time was reduced 
+by approximately 31%. Even though the planning time was 
+increased due to the new index structure, the overall 
+execution performance improved for the query retrieval.
