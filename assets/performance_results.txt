@@ -112,74 +112,10 @@ increased due to the new index structure, the overall
 execution performance significantly improved for the query 
 retrieval.
 
+
 ------------------------------------------------------------
 
 PROBLEM 3:
-SELECT 
-    source_ip, 
-    ROUND(AVG(anomaly_score), 2) AS avg_anomaly_risk
-FROM network_logs
-GROUP BY source_ip
-HAVING AVG(anomaly_score) > 75
-ORDER BY avg_anomaly_risk DESC
-LIMIT 10;
-
-------------------------------------------------------------
-1. BEFORE INDEXING (Sequential Scan)
-------------------------------------------------------------
-Limit  (cost=3897.45..3897.48 rows=10 width=39) (actual time=73.662..73.665 rows=10.00 loops=1)
-  Buffers: shared hit=2379, temp read=100 written=261
-  ->  Sort  (cost=3897.45..3930.79 rows=13333 width=39) (actual time=73.661..73.662 rows=10.00 loops=1)
-        Sort Key: (round(avg(anomaly_score), 2)) DESC
-        Sort Method: top-N heapsort  Memory: 25kB
-        Buffers: shared hit=2379, temp read=100 written=261
-        ->  HashAggregate  (cost=2976.00..3609.33 rows=13333 width=39) (actual time=49.436..72.172 rows=10011.00 loops=1)
-              Group Key: source_ip
-              Filter: (avg(anomaly_score) > '75'::numeric)
-              Batches: 5  Memory Usage: 8241kB  Disk Usage: 1544kB
-              Rows Removed by Filter: 29989
-              Buffers: shared hit=2376, temp read=100 written=261
-              ->  Seq Scan on network_logs  (cost=0.00..2776.00 rows=40000 width=13) (actual time=0.049..21.439 rows=40000.00 loops=1)
-                    Buffers: shared hit=2376
-Planning:
-  Buffers: shared hit=126 dirtied=1
-Planning Time: 2.723 ms
-Execution Time: 87.876 ms
-
-------------------------------------------------------------
-2. AFTER INDEXING (Index Scan)
-------------------------------------------------------------
-Limit  (cost=3897.45..3897.48 rows=10 width=39) (actual time=53.714..53.716 rows=10.00 loops=1)
-  Buffers: shared hit=2379, temp read=100 written=261
-  ->  Sort  (cost=3897.45..3930.79 rows=13333 width=39) (actual time=53.712..53.713 rows=10.00 loops=1)
-        Sort Key: (round(avg(anomaly_score), 2)) DESC
-        Sort Method: top-N heapsort  Memory: 25kB
-        Buffers: shared hit=2379, temp read=100 written=261
-        ->  HashAggregate  (cost=2976.00..3609.33 rows=13333 width=39) (actual time=31.665..52.430 rows=10011.00 loops=1)
-              Group Key: source_ip
-              Filter: (avg(anomaly_score) > '75'::numeric)
-              Batches: 5  Memory Usage: 8241kB  Disk Usage: 1544kB
-              Rows Removed by Filter: 29989
-              Buffers: shared hit=2376, temp read=100 written=261
-              ->  Seq Scan on network_logs  (cost=0.00..2776.00 rows=40000 width=13) (actual time=0.034..6.266 rows=40000.00 loops=1)
-                    Buffers: shared hit=2376
-Planning:
-  Buffers: shared hit=141 read=1
-Planning Time: 19.434 ms
-Execution Time: 66.931 ms
-
-------------------------------------------------------------
-SUMMARY: 
-After applying an index to the 'source_ip' column, the 
-execution time was reduced by approximately 24%. Similar
-to the first and second problem, even though the planning 
-time was increased due to the new index structure, the 
-overall execution performance improved for 
-the query retrieval.
-
-------------------------------------------------------------
-
-PROBLEM 4:
 SELECT 
     log_id, 
     source_ip, 
@@ -241,7 +177,7 @@ planning times were about the same duration.
 
 ------------------------------------------------------------
 
-PROBLEM 5:
+PROBLEM 4:
 SELECT 
     EXTRACT(HOUR FROM log_timestamp) AS attack_hour, 
     COUNT(*) AS event_volume

@@ -29,21 +29,7 @@ ORDER BY incident_count DESC;
 
 -- ------------------------------------------------------------------------
 
--- Problem 3: Which IPs are the biggest risk?
--- Solution: Identify sources with the highest average anomaly scores
-
-SELECT 
-    source_ip, 
-    ROUND(AVG(anomaly_score), 2) AS avg_anomaly_risk
-FROM network_logs
-GROUP BY source_ip
-HAVING AVG(anomaly_score) > 75
-ORDER BY avg_anomaly_risk DESC
-LIMIT 10;
-
--- ------------------------------------------------------------------------
-
--- Problem 4: Are there unusually large data transfers?
+-- Problem 3: Are there unusually large data transfers?
 -- Solution: Find logs where packet_length > average
 
 SELECT 
@@ -57,7 +43,7 @@ LIMIT 10;
 
 -- ------------------------------------------------------------------------
 
--- Problem 5: During which hour do most attacks occur?
+-- Problem 4: During which hour do most attacks occur?
 -- Solution: Extract the hour from the timestamp to identify peak activity 
 -- windows
 
@@ -68,3 +54,11 @@ FROM network_logs
 GROUP BY attack_hour
 ORDER BY event_volume DESC;
 
+-- ------------------------------------------------------------------------
+
+-- Problem 5: A user tries to insert a log that has a invalid severity level.
+-- Solution: Create a check constraint
+
+ALTER TABLE network_logs 
+ADD CONSTRAINT check_severity 
+CHECK (severity_level IN ('Low', 'Medium', 'High'));

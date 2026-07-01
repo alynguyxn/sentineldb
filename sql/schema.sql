@@ -36,11 +36,10 @@ CREATE INDEX idx_attack_type ON network_logs(attack_type);
 -- Solution 2: Create an index on the severity_level column
 CREATE INDEX idx_severity_level ON network_logs(severity_level);
 
--- Solution 3: Create an index on the source_ip column
-CREATE INDEX idx_source_ip ON network_logs(source_ip);
-
--- Solution 4: Create an index on the packet_length column
+-- Solution 3: Create an index on the packet_length column
 CREATE INDEX idx_packet_length ON network_logs(packet_length);
 
--- Solution 5: Create an index that extracts the hour from the log_timestamp column
+-- Solution 4: Create an index that extracts the hour from the log_timestamp column
 CREATE INDEX idx_attack_hour ON network_logs ((EXTRACT(HOUR FROM log_timestamp)));
+
+-- Solution 5: 
