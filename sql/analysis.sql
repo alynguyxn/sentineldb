@@ -84,3 +84,19 @@ VALUES (
 
 ---------------------------------------------------------------------------
 
+-- Problem 7: Find all follow-up attacks that occur within 1 hour of the 
+-- inital attack.
+-- Solution: Using a JOIN statement,search for all related events where 
+-- the same source_ip generated subsequent log within 1 hour
+
+SELECT 
+    a.source_ip, 
+    a.log_timestamp AS initial_event, 
+    b.log_timestamp AS follow_up_event,
+    a.attack_type AS initial_attack,
+    b.attack_type AS follow_up_attack
+FROM network_logs a
+JOIN network_logs b ON a.source_ip = b.source_ip
+WHERE a.log_timestamp < b.log_timestamp
+  AND b.log_timestamp <= a.log_timestamp + INTERVAL '1 hour'
+ORDER BY a.source_ip, a.log_timestamp;
