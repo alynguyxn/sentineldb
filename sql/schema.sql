@@ -1,9 +1,4 @@
-/* 
-SentinelDB Schema
-Purpose: Create and edit tables and indexes
- */
-
----------------------------------------------------------------------------
+/* SentinelDB Schema */
 
 CREATE TABLE network_logs (
     log_id SERIAL PRIMARY KEY,
@@ -34,42 +29,17 @@ CREATE TABLE network_logs (
     log_source VARCHAR(50)
 );
 
--- Solution 1: Create an index on the attack_type column
+-- Indexes for performance
 CREATE INDEX idx_attack_type ON network_logs(attack_type);
-
--- Solution 2: Create an index on the severity_level column
 CREATE INDEX idx_severity_level ON network_logs(severity_level);
-
--- Solution 3: Create an index on the packet_length column
 CREATE INDEX idx_packet_length ON network_logs(packet_length);
-
--- Solution 4: Create an index that extracts the hour from the log_timestamp column
 CREATE INDEX idx_attack_hour ON network_logs ((EXTRACT(HOUR FROM log_timestamp)));
 
--- Solution 5: Create a check constraint
+-- Data Integrity Constraints
 ALTER TABLE network_logs 
 ADD CONSTRAINT check_severity 
-CHECK (severity_level IN ('Low', 'Medium', 'High'));
+CHECK (severity_level IN ('Low', 'Medium', 'High', 'Critical'));
 
--- Solution 6: Create a check constraint
 ALTER TABLE network_logs 
 ADD CONSTRAINT check_packet_length 
 CHECK (packet_length >= 0);
-
--- Solution 7: Using a JOIN statement,search for all related events where the same source_ip generated subsequent log within 1 hour
-SELECT 
-    a.source_ip, 
-    a.log_timestamp AS initial_event, 
-    b.log_timestamp AS follow_up_event,
-    a.attack_type AS initial_attack,
-    b.attack_type AS follow_up_attack
-FROM network_logs a
-JOIN network_logs b ON a.source_ip = b.source_ip
-WHERE a.log_timestamp < b.log_timestamp
-  AND b.log_timestamp <= a.log_timestamp + INTERVAL '1 hour'
-ORDER BY a.source_ip, a.log_timestamp;
-
--- Solution 8: Delete log entries that are low severity and are > 90 days old
-DELETE FROM network_logs 
-WHERE severity_level = 'Low' 
-AND log_timestamp < CURRENT_DATE - INTERVAL '90 days';
